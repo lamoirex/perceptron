@@ -20,8 +20,11 @@ line-length = 88
 target-version = "py313"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "UP", "B", "D"]   # D = проверка docstring
-ignore = ["D203", "D213"]
+select = ["E", "F", "I", "N", "UP", "B", "D"]
+ignore = ["N803", "N806"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D"]
@@ -31,7 +34,7 @@ strict = true
 
 [[tool.mypy.overrides]]
 module = ["sklearn.*"]
-ignore_missing_imports = true      # у sklearn нет аннотаций типов
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
