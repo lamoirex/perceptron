@@ -45,3 +45,15 @@ class Perceptron:
         self.epochs = epochs
         self.weights: FloatArray = np.zeros(n_features, dtype=np.float64)
         self.bias: float = 0.0
+
+    @staticmethod
+    def activate(z: float) -> int:
+        """Apply the step activation function.
+
+        Args:
+            z: Weighted sum of inputs plus bias.
+
+        Returns:
+            1 if ``z >= 0``, otherwise 0.
+        """
+        return 1 if z >= 0 else 0
