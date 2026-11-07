@@ -16,6 +16,7 @@ class Perceptron:
         epochs: Number of full passes over the training data.
         weights: Weight vector of shape (n_features,).
         bias: Scalar bias term that shifts the decision boundary.
+        errors_per_epoch: Number of misclassified samples in each epoch.
     """
 
     def __init__(
@@ -46,6 +47,7 @@ class Perceptron:
         self.epochs = epochs
         self.weights: FloatArray = np.zeros(n_features, dtype=np.float64)
         self.bias: float = 0.0
+        self.errors_per_epoch: list[int] = []
 
     @staticmethod
     def activate(z: float) -> int:
@@ -107,7 +109,7 @@ class Perceptron:
             raise ValueError("labels in y must be 0 or 1")
 
 
-    def train(self, X: FloatArray, y: IntArray) -> None:
+    def train(self, X: FloatArray, y: IntArray) -> list[int]:
         """Fit weights and bias with the perceptron learning rule.
 
         For every sample the update is ``w += lr * (target - pred) * x``
@@ -116,13 +118,22 @@ class Perceptron:
         Args:
             X: Feature matrix of shape (n_samples, n_features).
             y: Labels of shape (n_samples,), each 0 or 1.
+
+        Returns:
+            Number of misclassified samples in each epoch.
         """
         self._check_dataset(X, y)
+        self.errors_per_epoch = []
         for _ in range(self.epochs):
+            errors = 0
             for xi, target in zip(X, y, strict=True):
                 error = int(target) - self.predict(xi)
-                self.weights += self.learning_rate * error * xi
-                self.bias += self.learning_rate * error
+                if error != 0:
+                    self.weights += self.learning_rate * error * xi
+                    self.bias += self.learning_rate * error
+                    errors += 1
+            self.errors_per_epoch.append(errors)
+        return self.errors_per_epoch
 
 
     def score(self, X: FloatArray, y: IntArray) -> float:
