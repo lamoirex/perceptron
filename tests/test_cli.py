@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from neuron.cli import first_zero_error_epoch, main
@@ -26,3 +28,10 @@ def test_invalid_arguments_exit_with_message(
 def test_first_zero_error_epoch() -> None:
     assert first_zero_error_epoch([3, 1, 0, 0]) == 3
     assert first_zero_error_epoch([2, 2, 2]) is None
+
+
+def test_main_saves_plots(tmp_path: Path) -> None:
+    exit_code = main(["--samples", "40", "--seed", "1", "--plot-dir", str(tmp_path)])
+    assert exit_code == 0
+    assert (tmp_path / "boundary.png").exists()
+    assert (tmp_path / "errors.png").exists()

@@ -3,9 +3,11 @@
 import argparse
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 
 from neuron.data import make_two_clusters
 from neuron.model import Perceptron
+from neuron.plots import plot_decision_boundary, plot_errors
 
 
 def positive_int(text: str) -> int:
@@ -71,6 +73,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--spread", type=positive_float, default=0.6, help="cloud standard deviation"
     )
     parser.add_argument(
+        "--plot-dir", type=Path, default=None, help="folder to save PNG plots into"
+    )
+    parser.add_argument(
         "--seed", type=int, default=None, help="random seed for reproducibility"
     )
     return parser
@@ -120,4 +125,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"Converged at epoch {converged}")
     print(f"Weights: {model.weights.round(3).tolist()}, bias: {model.bias:.3f}")
     print(f"Accuracy: {accuracy:.2%}")
+    if args.plot_dir is not None:
+        args.plot_dir.mkdir(parents=True, exist_ok=True)
+        plot_decision_boundary(model, X, y, args.plot_dir / "boundary.png")
+        plot_errors(errors, args.plot_dir / "errors.png")
+        print(f"Plots saved to {args.plot_dir}/")
     return 0
