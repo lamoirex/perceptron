@@ -74,3 +74,13 @@ class Perceptron:
             raise ValueError(f"expected x of shape ({self.n_features},), got {x.shape}")
         return float(np.dot(self.weights, x)) + self.bias
 
+    def predict(self, x: FloatArray) -> int:
+        """Predict the class of a single sample.
+
+        Args:
+            x: Feature vector of shape (n_features,).
+
+        Returns:
+            Predicted class label, 0 or 1.
+        """
+        return self.activate(self.net_input(x))
