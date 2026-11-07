@@ -88,7 +88,6 @@ class Perceptron:
         """
         return self.activate(self.net_input(x))
 
-
     def _check_dataset(self, X: FloatArray, y: IntArray) -> None:
         """Validate that ``X`` and ``y`` form a correct dataset.
 
@@ -107,7 +106,6 @@ class Perceptron:
             raise ValueError(f"expected y of shape ({X.shape[0]},), got {y.shape}")
         if not np.all((y == 0) | (y == 1)):
             raise ValueError("labels in y must be 0 or 1")
-
 
     def train(self, X: FloatArray, y: IntArray) -> list[int]:
         """Fit weights and bias with the perceptron learning rule.
@@ -134,7 +132,6 @@ class Perceptron:
                     errors += 1
             self.errors_per_epoch.append(errors)
         return self.errors_per_epoch
-
 
     def score(self, X: FloatArray, y: IntArray) -> float:
         """Compute classification accuracy.
