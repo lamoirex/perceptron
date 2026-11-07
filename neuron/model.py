@@ -123,3 +123,18 @@ class Perceptron:
                 error = int(target) - self.predict(xi)
                 self.weights += self.learning_rate * error * xi
                 self.bias += self.learning_rate * error
+
+
+    def score(self, X: FloatArray, y: IntArray) -> float:
+        """Compute classification accuracy.
+
+        Args:
+            X: Feature matrix of shape (n_samples, n_features).
+            y: True labels of shape (n_samples,).
+
+        Returns:
+            Fraction of correctly classified samples, from 0.0 to 1.0.
+        """
+        self._check_dataset(X, y)
+        predictions = np.array([self.predict(xi) for xi in X])
+        return float(np.mean(predictions == y))
