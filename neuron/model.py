@@ -4,6 +4,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 FloatArray = NDArray[np.float64]
+IntArray = NDArray[np.int_]
 
 
 class Perceptron:
@@ -84,3 +85,23 @@ class Perceptron:
             Predicted class label, 0 or 1.
         """
         return self.activate(self.net_input(x))
+
+
+    def _check_dataset(self, X: FloatArray, y: IntArray) -> None:
+        """Validate that ``X`` and ``y`` form a correct dataset.
+
+        Args:
+            X: Feature matrix of shape (n_samples, n_features).
+            y: Labels of shape (n_samples,), each 0 or 1.
+
+        Raises:
+            ValueError: If shapes do not match or labels are not 0/1.
+        """
+        if X.ndim != 2 or X.shape[1] != self.n_features:
+            raise ValueError(
+                f"expected X of shape (n_samples, {self.n_features}), got {X.shape}"
+            )
+        if y.shape != (X.shape[0],):
+            raise ValueError(f"expected y of shape ({X.shape[0]},), got {y.shape}")
+        if not np.all((y == 0) | (y == 1)):
+            raise ValueError("labels in y must be 0 or 1")
