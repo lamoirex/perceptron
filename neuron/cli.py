@@ -68,6 +68,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--epochs", type=positive_int, default=50, help="number of epochs"
     )
     parser.add_argument(
+        "--spread", type=positive_float, default=0.6, help="cloud standard deviation"
+    )
+    parser.add_argument(
         "--seed", type=int, default=None, help="random seed for reproducibility"
     )
     return parser
@@ -99,7 +102,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     """
     args = build_parser().parse_args(argv)
     try:
-        X, y = make_two_clusters(n_samples=args.samples, seed=args.seed)
+        X, y = make_two_clusters(
+            n_samples=args.samples, spread=args.spread, seed=args.seed
+        )
         model = Perceptron(n_features=2, learning_rate=args.lr, epochs=args.epochs)
         errors = model.train(X, y)
         accuracy = model.score(X, y)
