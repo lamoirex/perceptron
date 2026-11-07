@@ -75,3 +75,28 @@ def load_iris_binary(task: IrisTask) -> tuple[FloatArray, IntArray]:
         return X, (species == 0).astype(np.int_)
     mask = species != 0
     return X[mask], (species[mask] == 2).astype(np.int_)
+
+
+def train_test_split(
+    X: FloatArray, y: IntArray, test_ratio: float = 0.3, seed: int | None = None
+) -> tuple[FloatArray, FloatArray, IntArray, IntArray]:
+    """Randomly split a dataset into training and test parts.
+
+    Args:
+        X: Feature matrix of shape (n_samples, n_features).
+        y: Labels of shape (n_samples,).
+        test_ratio: Fraction of samples for the test part, from 0 to 1.
+        seed: Random seed for reproducible results; None means random.
+
+    Returns:
+        Tuple ``(X_train, X_test, y_train, y_test)``.
+
+    Raises:
+        ValueError: If ``test_ratio`` leaves one of the parts empty.
+    """
+    n_test = round(len(X) * test_ratio)
+    if not 0 < n_test < len(X):
+        raise ValueError(f"test_ratio {test_ratio} leaves an empty train or test set")
+    order = np.random.default_rng(seed).permutation(len(X))
+    test_idx, train_idx = order[:n_test], order[n_test:]
+    return X[train_idx], X[test_idx], y[train_idx], y[test_idx]
