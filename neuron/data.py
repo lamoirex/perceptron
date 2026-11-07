@@ -100,3 +100,24 @@ def train_test_split(
     order = np.random.default_rng(seed).permutation(len(X))
     test_idx, train_idx = order[:n_test], order[n_test:]
     return X[train_idx], X[test_idx], y[train_idx], y[test_idx]
+
+
+def standardize(
+    X_train: FloatArray, X_test: FloatArray
+) -> tuple[FloatArray, FloatArray]:
+    """Scale features to zero mean and unit variance.
+
+    Mean and standard deviation are computed on the training part only,
+    so no information from the test part leaks into training.
+
+    Args:
+        X_train: Training features of shape (n_train, n_features).
+        X_test: Test features of shape (n_test, n_features).
+
+    Returns:
+        Tuple ``(X_train_scaled, X_test_scaled)``.
+    """
+    mean = X_train.mean(axis=0)
+    std = X_train.std(axis=0)
+    std[std == 0] = 1.0
+    return (X_train - mean) / std, (X_test - mean) / std
