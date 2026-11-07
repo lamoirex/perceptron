@@ -57,3 +57,20 @@ class Perceptron:
             1 if ``z >= 0``, otherwise 0.
         """
         return 1 if z >= 0 else 0
+
+    def net_input(self, x: FloatArray) -> float:
+        """Compute the weighted sum of inputs plus bias.
+
+        Args:
+            x: Feature vector of shape (n_features,).
+
+        Returns:
+            The value ``z = w · x + b``.
+
+        Raises:
+            ValueError: If ``x`` has the wrong shape.
+        """
+        if x.shape != (self.n_features,):
+            raise ValueError(f"expected x of shape ({self.n_features},), got {x.shape}")
+        return float(np.dot(self.weights, x)) + self.bias
+
