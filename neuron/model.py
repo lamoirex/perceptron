@@ -105,3 +105,21 @@ class Perceptron:
             raise ValueError(f"expected y of shape ({X.shape[0]},), got {y.shape}")
         if not np.all((y == 0) | (y == 1)):
             raise ValueError("labels in y must be 0 or 1")
+
+
+    def train(self, X: FloatArray, y: IntArray) -> None:
+        """Fit weights and bias with the perceptron learning rule.
+
+        For every sample the update is ``w += lr * (target - pred) * x``
+        and ``b += lr * (target - pred)``.
+
+        Args:
+            X: Feature matrix of shape (n_samples, n_features).
+            y: Labels of shape (n_samples,), each 0 or 1.
+        """
+        self._check_dataset(X, y)
+        for _ in range(self.epochs):
+            for xi, target in zip(X, y, strict=True):
+                error = int(target) - self.predict(xi)
+                self.weights += self.learning_rate * error * xi
+                self.bias += self.learning_rate * error
