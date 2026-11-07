@@ -53,6 +53,7 @@ def test_predict_rejects_wrong_shape() -> None:
 
 AND_X = np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]])
 AND_Y = np.array([0, 0, 0, 1])
+XOR_Y = np.array([0, 1, 1, 0])
 
 
 def test_score_counts_correct_fraction() -> None:
@@ -71,3 +72,18 @@ def test_train_rejects_bad_labels() -> None:
     model = Perceptron(n_features=2)
     with pytest.raises(ValueError):
         model.train(AND_X, np.array([0, 1, 2, 1]))
+
+
+def test_errors_per_epoch_reach_zero() -> None:
+    model = Perceptron(n_features=2, learning_rate=1.0, epochs=20)
+    errors = model.train(AND_X, AND_Y)
+    assert len(errors) == 20
+    assert errors[0] > 0
+    assert errors[-1] == 0
+
+
+def test_train_cannot_learn_xor() -> None:
+    model = Perceptron(n_features=2, learning_rate=1.0, epochs=100)
+    errors = model.train(AND_X, XOR_Y)
+    assert errors[-1] > 0
+    assert model.score(AND_X, XOR_Y) < 1.0
