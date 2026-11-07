@@ -1,6 +1,9 @@
 """Synthetic and real datasets for the perceptron."""
 
+from typing import Literal
+
 import numpy as np
+from sklearn.datasets import load_iris
 
 from neuron.model import FloatArray, IntArray
 
@@ -46,3 +49,29 @@ def make_two_clusters(
 
     order = rng.permutation(n_samples)
     return X[order], y[order]
+
+
+IrisTask = Literal["setosa", "versicolor"]
+
+
+def load_iris_binary(task: IrisTask) -> tuple[FloatArray, IntArray]:
+    """Load the iris dataset as a binary classification problem.
+
+    The iris dataset has 150 flowers of 3 species and 4 features
+    (sepal length, sepal width, petal length, petal width, in cm).
+
+    Args:
+        task: ``"setosa"`` means setosa (1) vs the two other species (0),
+            150 samples, linearly separable. ``"versicolor"`` means
+            versicolor (0) vs virginica (1), 100 samples, not separable.
+
+    Returns:
+        Tuple ``(X, y)`` with X of shape (n_samples, 4) and 0/1 labels.
+    """
+    iris = load_iris()
+    X = np.asarray(iris.data, dtype=np.float64)
+    species = np.asarray(iris.target, dtype=np.int_)
+    if task == "setosa":
+        return X, (species == 0).astype(np.int_)
+    mask = species != 0
+    return X[mask], (species[mask] == 2).astype(np.int_)
