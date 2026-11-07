@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 from matplotlib.figure import Figure
+from matplotlib.ticker import MaxNLocator
 
 from neuron.model import FloatArray, IntArray, Perceptron
 
@@ -102,4 +103,22 @@ def plot_decision_boundary(
     ax.set_ylim(y_range)
     ax.legend(frameon=False, loc="upper left")
     _style_axes(fig, "Perceptron decision boundary", "x1", "x2")
+    fig.savefig(path, dpi=150)
+
+
+def plot_errors(errors: list[int], path: Path) -> None:
+    """Save a line chart of misclassified samples per epoch.
+
+    Args:
+        errors: Misclassified samples count for each epoch.
+        path: Output image file, e.g. ``errors.png``.
+    """
+    fig = Figure(figsize=(6, 4), layout="constrained")
+    ax = fig.add_subplot()
+    epochs = range(1, len(errors) + 1)
+    ax.plot(epochs, errors, color=CLASS_COLORS[0], linewidth=2, marker="o", ms=4)
+    ax.set_ylim(bottom=0)
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    _style_axes(fig, "Training errors per epoch", "epoch", "misclassified samples")
     fig.savefig(path, dpi=150)
