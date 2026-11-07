@@ -66,4 +66,40 @@ def _style_axes(fig: Figure, title: str, xlabel: str, ylabel: str) -> None:
         ax.spines[side].set_visible(False)
 
 
-def
+def plot_decision_boundary(
+    model: Perceptron, X: FloatArray, y: IntArray, path: Path
+) -> None:
+    """Save a scatter plot of both classes with the learned boundary.
+
+    Args:
+        model: Trained perceptron with two features.
+        X: Points of shape (n_samples, 2).
+        y: Labels of shape (n_samples,).
+        path: Output image file, e.g. ``boundary.png``.
+    """
+    fig = Figure(figsize=(6, 5), layout="constrained")
+    ax = fig.add_subplot()
+    for label in (0, 1):
+        points = X[y == label]
+        ax.scatter(
+            points[:, 0],
+            points[:, 1],
+            s=28,
+            color=CLASS_COLORS[label],
+            marker=CLASS_MARKERS[label],
+            edgecolors="white",
+            linewidths=0.6,
+            label=f"class {label}",
+        )
+
+    x_range = (float(X[:, 0].min()) - 1, float(X[:, 0].max()) + 1)
+    y_range = (float(X[:, 1].min()) - 1, float(X[:, 1].max()) + 1)
+    line = boundary_line(model, x_range, y_range)
+    if line is not None:
+        ax.plot(*line, color=BOUNDARY_COLOR, linewidth=2, label="decision boundary")
+
+    ax.set_xlim(x_range)
+    ax.set_ylim(y_range)
+    ax.legend(frameon=False, loc="upper left")
+    _style_axes(fig, "Perceptron decision boundary", "x1", "x2")
+    fig.savefig(path, dpi=150)
