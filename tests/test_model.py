@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from neuron.data import make_two_clusters
 from neuron.model import Perceptron
 
 
@@ -87,3 +88,10 @@ def test_train_cannot_learn_xor() -> None:
     errors = model.train(AND_X, XOR_Y)
     assert errors[-1] > 0
     assert model.score(AND_X, XOR_Y) < 1.0
+
+
+def test_train_separates_synthetic_clusters() -> None:
+    X, y = make_two_clusters(n_samples=200, seed=7)
+    model = Perceptron(n_features=2, learning_rate=0.1, epochs=50)
+    model.train(X, y)
+    assert model.score(X, y) == 1.0
