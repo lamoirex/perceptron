@@ -35,3 +35,15 @@ def test_main_saves_plots(tmp_path: Path) -> None:
     assert exit_code == 0
     assert (tmp_path / "boundary.png").exists()
     assert (tmp_path / "errors.png").exists()
+
+
+def test_main_runs_iris_setosa(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = main(["--dataset", "iris-setosa", "--seed", "0"])
+    output = capsys.readouterr().out
+    assert exit_code == 0
+    assert "Test accuracy: 100.00%" in output
+
+
+def test_unknown_dataset_is_rejected() -> None:
+    with pytest.raises(SystemExit):
+        main(["--dataset", "mnist"])
