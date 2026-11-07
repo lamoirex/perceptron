@@ -49,3 +49,25 @@ def test_predict_rejects_wrong_shape() -> None:
     model = make_model_with_line()
     with pytest.raises(ValueError):
         model.predict(np.array([1.0, 2.0, 3.0]))
+
+
+AND_X = np.array([[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]])
+AND_Y = np.array([0, 0, 0, 1])
+
+
+def test_score_counts_correct_fraction() -> None:
+    model = make_model_with_line()
+    # predictions are 0, 1, 1, 1; AND is 0, 0, 0, 1 -> 2 of 4 match
+    assert model.score(AND_X, AND_Y) == 0.5
+
+
+def test_train_learns_and_gate() -> None:
+    model = Perceptron(n_features=2, learning_rate=1.0, epochs=20)
+    model.train(AND_X, AND_Y)
+    assert model.score(AND_X, AND_Y) == 1.0
+
+
+def test_train_rejects_bad_labels() -> None:
+    model = Perceptron(n_features=2)
+    with pytest.raises(ValueError):
+        model.train(AND_X, np.array([0, 1, 2, 1]))
